@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "919239368842",
+    "firebase_url": "https://e-commerce-admin-client-default-rtdb.firebaseio.com",
+    "project_id": "e-commerce-admin-client",
+    "storage_bucket": "e-commerce-admin-client.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:919239368842:android:56c8f2b4cedc483ebb4d73",
+        "android_client_info": {
+          "package_name": "com.example.e_commerce_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "919239368842-37uvihgj8crcv8fj74n6vh86e6q4tbp1.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnzwUrThUsDQUQK32m9CauYry9sCX7eYc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "919239368842-37uvihgj8crcv8fj74n6vh86e6q4tbp1.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
