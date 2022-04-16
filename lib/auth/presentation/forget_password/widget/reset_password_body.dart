@@ -1,7 +1,9 @@
+import 'package:e_commerce_flutter/auth/data/AuthService.dart';
 import 'package:e_commerce_flutter/auth/presentation/widget/textfiled_password_user.dart';
 import 'package:e_commerce_flutter/auth/presentation/widget/textfiled_user.dart';
 import 'package:e_commerce_flutter/default_button.dart';
 import 'package:e_commerce_flutter/home/presentation/screen/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class ResetPasswordBody extends StatefulWidget {
@@ -15,6 +17,7 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
   final _formKey = GlobalKey<FormState>();
   final _codeController = TextEditingController();
   final _newPasswordController = TextEditingController();
+  AuthService? _authService = new AuthService(FirebaseAuth.instance);
 
   @override
   Widget build(BuildContext context) {
@@ -81,16 +84,7 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
                 DefaultButton(
                   'Continue',
                   18,
-                  () {
-                    setState(() {
-                      if (_codeController.text.isNotEmpty &&
-                          _newPasswordController.text.isNotEmpty) {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen(),),);
-                      } else {
-                        print('error Screen');
-                      }
-                    });
-                  },
+                  confirmPassword,
                 ),
                 SizedBox(
                   height: 25,
@@ -101,5 +95,23 @@ class _ResetPasswordBodyState extends State<ResetPasswordBody> {
         ),
       ),
     );
+  }
+
+  Future confirmPassword() async{
+    if (_codeController.text.isNotEmpty &&
+        _newPasswordController.text.isNotEmpty) {
+      await _authService!
+          .ConfirmPassword(_codeController.text,
+          _newPasswordController.text)
+          .then((_) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ),
+        );
+      });
+    } else {
+      print('error Screen');
+    }
   }
 }

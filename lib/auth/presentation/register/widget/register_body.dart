@@ -1,8 +1,10 @@
+import 'package:e_commerce_flutter/auth/data/AuthService.dart';
 import 'package:e_commerce_flutter/auth/presentation/widget/socal_card.dart';
 import 'package:e_commerce_flutter/auth/presentation/widget/textfiled_password_user.dart';
 import 'package:e_commerce_flutter/auth/presentation/widget/textfiled_user.dart';
 import 'package:e_commerce_flutter/default_button.dart';
 import 'package:e_commerce_flutter/home/presentation/screen/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class RegisterBody extends StatefulWidget {
@@ -14,11 +16,10 @@ class RegisterBody extends StatefulWidget {
 
 class _RegisterBodyState extends State<RegisterBody> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController();
-  final _phoneController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
+  AuthService? _authService = new AuthService(FirebaseAuth.instance);
 
   @override
   Widget build(BuildContext context) {
@@ -55,38 +56,12 @@ class _RegisterBodyState extends State<RegisterBody> {
                   child: Column(
                     children: [
                       TextFiledUser(
-                        'Enter your name',
-                        'Name',
-                        'assets/icons/User.svg',
-                        TextInputType.name,
-                        _nameController,
-                            (value) {
-                          // Todo
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      TextFiledUser(
-                        'Enter your phone',
-                        'Phone',
-                        'assets/icons/Phone.svg',
-                        TextInputType.phone,
-                        _phoneController,
-                            (value) {
-                          // Todo
-                        },
-                      ),
-                      SizedBox(
-                        height: 15,
-                      ),
-                      TextFiledUser(
                         'Enter your email',
                         'Email',
                         'assets/icons/Mail.svg',
                         TextInputType.emailAddress,
                         _emailController,
-                            (value) {
+                        (value) {
                           // Todo
                         },
                       ),
@@ -98,7 +73,7 @@ class _RegisterBodyState extends State<RegisterBody> {
                         'Password',
                         'assets/icons/Lock.svg',
                         _passwordController,
-                            (value) {
+                        (value) {
                           // Todo
                         },
                       ),
@@ -110,7 +85,7 @@ class _RegisterBodyState extends State<RegisterBody> {
                         'Confirm Password',
                         'assets/icons/Lock.svg',
                         _confirmPasswordController,
-                            (value) {
+                        (value) {
                           // Todo
                         },
                       ),
@@ -120,20 +95,7 @@ class _RegisterBodyState extends State<RegisterBody> {
                       DefaultButton(
                         'Continue',
                         18,
-                            () {
-                          setState(() {
-                            if ( _nameController.text.isNotEmpty &&
-                                _phoneController.text.isNotEmpty &&
-                                _emailController.text.isNotEmpty &&
-                                _passwordController.text.isNotEmpty &&
-                                _confirmPasswordController.text.isNotEmpty &&
-                                _passwordController.text == _confirmPasswordController.text) {
-                              Navigator.of(context).push(MaterialPageRoute(builder: (context) => HomeScreen(),),);
-                            } else {
-                              print('error Screen');
-                            }
-                          });
-                        },
+                        register,
                       ),
                       SizedBox(
                         height: 35,
@@ -165,5 +127,23 @@ class _RegisterBodyState extends State<RegisterBody> {
         ),
       ),
     );
+  }
+
+  Future register() async{
+    if (_emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty &&
+        _confirmPasswordController.text.isNotEmpty &&
+        _passwordController.text ==
+            _confirmPasswordController.text) {
+      await _authService!.SignUp(_emailController.text, _passwordController.text).then((_){
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ),
+        );
+      });
+    } else {
+      print('error Screen');
+    }
   }
 }

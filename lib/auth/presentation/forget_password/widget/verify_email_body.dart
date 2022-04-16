@@ -1,8 +1,10 @@
+import 'package:e_commerce_flutter/auth/data/AuthService.dart';
 import 'package:e_commerce_flutter/auth/presentation/forget_password/screen/reset_password_screen.dart';
 import 'package:e_commerce_flutter/auth/presentation/register/screen/register_screen.dart';
 import 'package:e_commerce_flutter/auth/presentation/widget/textfiled_user.dart';
 import 'package:e_commerce_flutter/default_button.dart';
 import 'package:e_commerce_flutter/home/presentation/screen/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class VerifyEmailBody extends StatefulWidget {
@@ -15,6 +17,7 @@ class VerifyEmailBody extends StatefulWidget {
 class _VerifyEmailBodyState extends State<VerifyEmailBody> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  AuthService? _authService = new AuthService(FirebaseAuth.instance);
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +57,7 @@ class _VerifyEmailBodyState extends State<VerifyEmailBody> {
                     'assets/icons/Mail.svg',
                     TextInputType.emailAddress,
                     _emailController,
-                        (value) {
+                    (value) {
                       // Todo
                     },
                   ),
@@ -65,15 +68,7 @@ class _VerifyEmailBodyState extends State<VerifyEmailBody> {
                 DefaultButton(
                   'Continue',
                   18,
-                      () {
-                    setState(() {
-                      if (_emailController.text.isNotEmpty) {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => ResetPasswordScreen(),),);
-                      } else {
-                        print('error Screen');
-                      }
-                    });
-                  },
+                  sendPassword,
                 ),
                 SizedBox(
                   height: 25,
@@ -87,12 +82,16 @@ class _VerifyEmailBodyState extends State<VerifyEmailBody> {
                     ),
                     InkWell(
                       onTap: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => RegisterScreen(),),);
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => RegisterScreen(),
+                          ),
+                        );
                       },
                       child: Text(
                         'Sign Up ',
-                        style: TextStyle(
-                            fontSize: 16, color: Color(0xFFFF7643)),
+                        style:
+                            TextStyle(fontSize: 16, color: Color(0xFFFF7643)),
                       ),
                     ),
                   ],
@@ -103,5 +102,21 @@ class _VerifyEmailBodyState extends State<VerifyEmailBody> {
         ),
       ),
     );
+  }
+
+  Future sendPassword() async{
+    if (_emailController.text.isNotEmpty) {
+      await _authService!
+          .SendPassword(_emailController.text)
+          .then((_) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ResetPasswordScreen(),
+          ),
+        );
+      });
+    } else {
+      print('error Screen');
+    }
   }
 }

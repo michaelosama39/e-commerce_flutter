@@ -1,3 +1,4 @@
+import 'package:e_commerce_flutter/auth/data/AuthService.dart';
 import 'package:e_commerce_flutter/auth/presentation/forget_password/screen/reset_password_screen.dart';
 import 'package:e_commerce_flutter/auth/presentation/forget_password/screen/verify_email_screen.dart';
 import 'package:e_commerce_flutter/auth/presentation/register/screen/register_screen.dart';
@@ -6,6 +7,7 @@ import 'package:e_commerce_flutter/auth/presentation/widget/textfiled_password_u
 import 'package:e_commerce_flutter/auth/presentation/widget/textfiled_user.dart';
 import 'package:e_commerce_flutter/default_button.dart';
 import 'package:e_commerce_flutter/home/presentation/screen/home_screen.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -20,6 +22,7 @@ class _LoginBodyState extends State<LoginBody> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  AuthService? _authService = new AuthService(FirebaseAuth.instance);
 
   @override
   Widget build(BuildContext context) {
@@ -62,9 +65,7 @@ class _LoginBodyState extends State<LoginBody> {
                         'assets/icons/Mail.svg',
                         TextInputType.emailAddress,
                         _emailController,
-                        (value) {
-
-                        },
+                        (value) {},
                       ),
                       SizedBox(
                         height: 20,
@@ -116,20 +117,7 @@ class _LoginBodyState extends State<LoginBody> {
                       DefaultButton(
                         'Continue',
                         18,
-                        () {
-                          setState(() async {
-                            if (_emailController.text.isNotEmpty &&
-                                _passwordController.text.isNotEmpty) {
-                              Navigator.of(context).push(
-                                MaterialPageRoute(
-                                  builder: (context) => HomeScreen(),
-                                ),
-                              );
-                            } else {
-                              print('error Screen');
-                            }
-                          });
-                        },
+                        login,
                       ),
                       SizedBox(
                         height: 40,
@@ -177,5 +165,21 @@ class _LoginBodyState extends State<LoginBody> {
         ),
       ),
     );
+  }
+
+  Future login() async {
+    if(_emailController.text.isNotEmpty &&
+        _passwordController.text.isNotEmpty) {
+      await _authService!.SignIn(_emailController.text, _passwordController.text)
+          .then((_) {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => HomeScreen(),
+          ),
+        );
+      });
+    } else {
+      print('error Screen');
+    }
   }
 }
